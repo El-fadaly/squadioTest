@@ -21,7 +21,8 @@ class NavBar extends StatelessWidget {
           ),
           CustomText(
             text: title,
-            fontSize: 15,
+            fontSize: 18,
+            fontColor: Colors.black,
           ),
           const SizedBox(
             width: 10,

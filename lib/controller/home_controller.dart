@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:squadio_test/config/api_keys.dart';
 import 'package:squadio_test/config/api_urls.dart';
+import 'package:squadio_test/model/pooular_persons/images/images_model.dart';
+import 'package:squadio_test/model/pooular_persons/images/profile_model.dart';
 import 'package:squadio_test/model/pooular_persons/person_model.dart';
 import 'package:squadio_test/model/pooular_persons/popular_person_model.dart';
 import 'package:squadio_test/services/http_service.dart';
@@ -21,6 +23,12 @@ class HomeController extends GetxController {
   final scrollController = ScrollController();
 
   PersonModel selectedPerson = PersonModel();
+
+  late ImagesModel images;
+  List<ProfileModel> profiles = [];
+
+  int indexBanner = 0;
+
   @override
   void onInit() async {
     // TODO: implement onInit
@@ -92,10 +100,60 @@ class HomeController extends GetxController {
     update();
   }
 
-  void openPersonDetailsScreen(index) {
+  Future<void> getPersonImagesFromService() async {
+    if (isLoading) return;
+    print('page  $page');
+    isLoading = true;
+    try {
+      final response = await httpService.request(
+        url: ApiUrls.person +
+            '/${selectedPerson.id}/images' +
+            '?api_key=' +
+            ApiKeys.moviesDatabaseApiKey,
+        method: Method.GET,
+      );
+      if (response != null) {
+        if (response is dio.Response) {
+          if (response.statusCode == 200) {
+            images = ImagesModel.fromJson(response.data);
+            profiles = images.profiles ?? [];
+            print('total images  = ' + profiles.length.toString());
+          } else {
+            showAlertDialog(
+              title: 'Sorry',
+              description: 'something went wrong please try again  ',
+              actionText: 'try again',
+              actionOnPress: () {
+                Get.back();
+                getPersonImagesFromService();
+              },
+              cancelText: 'cancel',
+              cancelOnPress: () => Get.back(),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      print("exception in getting  popular  persons images $e");
+    }
+    isLoading = false;
+    update();
+  }
+
+  void openPersonDetailsScreen(index) async {
     selectedPerson = persons[index];
+    await getPersonImagesFromService();
     print('selected person name  ${selectedPerson.name}');
     Get.toNamed(PersonDetailsScreen.id);
+  }
+
+  void onProfileTapped(index) {
+    print("profile  index $index");
+  }
+
+  void onCarouselPageChanged(index) {
+    indexBanner = index;
+    update();
   }
 
   void showAlertDialog({
