@@ -1,5 +1,10 @@
+import 'dart:io';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:squadio_test/config/api_keys.dart';
 import 'package:squadio_test/config/api_urls.dart';
 import 'package:squadio_test/controller/profile_controller.dart';
@@ -35,8 +40,9 @@ class HomeController extends GetxController {
   void onInit() async {
     // TODO: implement onInit
     super.onInit();
+
+    getInitialData();
     httpService.init();
-    getPopularPeopleFromService();
     scrollController.addListener(
       () {
         if (scrollController.position.maxScrollExtent ==
@@ -61,6 +67,39 @@ class HomeController extends GetxController {
     scrollController.dispose();
   }
 
+  void getInitialData() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    print("connectivity  $connectivityResult");
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      getPopularPeopleFromService();
+    } else if (connectivityResult == ConnectivityResult.none) {
+      print("in inital  from local  ");
+      getDataFromLocalDatabase();
+    }
+  }
+
+  void getDataFromLocalDatabase() async {
+    print("in get from local  ");
+    var box = await Hive.openBox(ApiUrls.dataBaseBoxName);
+    var dataFromDataBase = box.get(ApiUrls.dataBaseKey);
+    print("data  $dataFromDataBase");
+    getPersonDataFromJson(dataFromDataBase);
+  }
+
+  void addDataToLocalDatabase(json) async {
+    var box = await Hive.openBox(ApiUrls.dataBaseBoxName);
+    box.put(ApiUrls.dataBaseKey, json);
+  }
+
+  void getPersonDataFromJson(json) {
+    if (json != null) {
+      popularPersonModel = PopularPersonModel.fromJson(json);
+      persons.addAll(popularPersonModel.results ?? []);
+      update();
+    }
+  }
+
   void getPopularPeopleFromService() async {
     if (isLoading) return;
     print('page  $page');
@@ -76,9 +115,9 @@ class HomeController extends GetxController {
       if (response != null) {
         if (response is dio.Response) {
           if (response.statusCode == 200) {
-            popularPersonModel = PopularPersonModel.fromJson(response.data);
-            persons.addAll(popularPersonModel.results ?? []);
+            getPersonDataFromJson(response.data);
             page++;
+            addDataToLocalDatabase(response.data);
             print('total results' + persons.length.toString());
           } else {
             showAlertDialog(

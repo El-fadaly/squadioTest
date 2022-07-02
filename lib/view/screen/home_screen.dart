@@ -22,39 +22,42 @@ class HomeScreen extends StatelessWidget {
             children: [
               const NavBar(title: 'Popular People'),
               Expanded(
-                child: GetBuilder<HomeController>(
-                  builder: (controllerValue) => ListView.builder(
-                    // shrinkWrap: true,
-                    // physics: const NeverScrollableScrollPhysics(),
-                    controller: controllerValue.scrollController,
-                    scrollDirection: Axis.vertical,
-                    itemCount: controllerValue.persons.length + 1,
-                    itemBuilder: (context, index) {
-                      if (index < controllerValue.persons.length) {
-                        final person = controllerValue.persons[index];
-                        return PersonCard(
-                          field: person.knownForDepartment ?? "",
-                          name: person.name ?? "",
-                          imageUrl: person.profilePath ?? "",
-                          gender: person.gender == 1 ? "female" : "male",
-                          popularity: person.popularity.toString(),
-                          onTapped: () =>
-                              controllerValue.openPersonDetailsScreen(index),
-                        );
-                      } else {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 32),
-                          child: Center(
-                            child: controllerValue.hasMoreData
-                                ? const CircularProgressIndicator()
-                                : const CustomText(
-                                    text: 'there no mre actors to get ',
-                                    fontSize: 15,
-                                  ),
-                          ),
-                        );
-                      }
-                    },
+                child: GestureDetector(
+                  onTap: () => homeController.getPopularPeopleFromService(),
+                  child: GetBuilder<HomeController>(
+                    builder: (controllerValue) => ListView.builder(
+                      // shrinkWrap: true,
+                      // physics: const NeverScrollableScrollPhysics(),
+                      controller: controllerValue.scrollController,
+                      scrollDirection: Axis.vertical,
+                      itemCount: controllerValue.persons.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index < controllerValue.persons.length) {
+                          final person = controllerValue.persons[index];
+                          return PersonCard(
+                            field: person.knownForDepartment ?? "",
+                            name: person.name ?? "",
+                            imageUrl: person.profilePath ?? "",
+                            gender: person.gender == 1 ? "female" : "male",
+                            popularity: person.popularity.toString(),
+                            onTapped: () =>
+                                controllerValue.openPersonDetailsScreen(index),
+                          );
+                        } else {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 32),
+                            child: Center(
+                              child: controllerValue.hasMoreData
+                                  ? const CircularProgressIndicator()
+                                  : const CustomText(
+                                      text: 'there no mre actors to get ',
+                                      fontSize: 15,
+                                    ),
+                            ),
+                          );
+                        }
+                      },
+                    ),
                   ),
                 ),
               ),

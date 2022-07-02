@@ -1,12 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+// import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:squadio_test/view/screen/home_screen.dart';
 import 'package:squadio_test/view/screen/person_details_screen.dart';
 import 'package:squadio_test/view/screen/profile_screen.dart';
-import 'package:toast/toast.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // var path = Directory.current.path;
+  await Hive.initFlutter();
   runApp(const SquadioTest());
 }
 
@@ -20,8 +26,6 @@ class SquadioTest extends StatefulWidget {
 class _SquadioTestState extends State<SquadioTest> {
   @override
   Widget build(BuildContext context) {
-    ToastContext().init(context);
-
     return GetMaterialApp(
       builder: EasyLoading.init(),
       initialRoute: HomeScreen.id,
