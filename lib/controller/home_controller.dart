@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:squadio_test/config/api_keys.dart';
 import 'package:squadio_test/config/api_urls.dart';
+import 'package:squadio_test/controller/profile_controller.dart';
 import 'package:squadio_test/model/pooular_persons/images/images_model.dart';
 import 'package:squadio_test/model/pooular_persons/images/profile_model.dart';
 import 'package:squadio_test/model/pooular_persons/person_model.dart';
@@ -10,6 +11,7 @@ import 'package:squadio_test/services/http_service.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:squadio_test/view/components/custom_alert_dialog.dart';
 import 'package:squadio_test/view/screen/person_details_screen.dart';
+import 'package:squadio_test/view/screen/profile_screen.dart';
 
 class HomeController extends GetxController {
   HttpService httpService = HttpService();
@@ -149,6 +151,10 @@ class HomeController extends GetxController {
 
   void onProfileTapped(index) {
     print("profile  index $index");
+    final profileController = Get.put(ProfileController());
+    profileController.profile = profiles[index];
+    profileController.selectedPersonName = selectedPerson.name ?? "";
+    Get.toNamed(ProfileScreen.id);
   }
 
   void onCarouselPageChanged(index) {

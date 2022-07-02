@@ -42,6 +42,7 @@ class PersonDetailsScreen extends StatelessWidget {
                     ),
                     itemCount: homeController.profiles.length,
                     itemBuilder: (context, itemIndex, realIndex) {
+                      print("index  $itemIndex");
                       final profile = homeController.profiles[itemIndex];
                       print("image  path ${profile.filePath}");
                       return ProfileSlider(
