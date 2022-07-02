@@ -46,7 +46,9 @@ class PersonCard extends StatelessWidget {
                     height: 50,
                     width: 50,
                     fit: BoxFit.fill,
-                    imageUrl: 'http://image.tmdb.org/t/p/original' + imageUrl,
+                    imageUrl: imageUrl != ""
+                        ? 'http://image.tmdb.org/t/p/original' + imageUrl
+                        : "https://thumbs.dreamstime.com/b/person-icon-line-style-man-symbol-flat-isolated-white-background-simple-avatar-abstract-black-user-sign-vector-illustration-156936114.jpg",
                     alignment: Alignment.center,
                     errorWidget: (context, url, error) =>
                         const Icon(Icons.error),

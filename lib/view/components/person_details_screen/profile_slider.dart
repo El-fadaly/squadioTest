@@ -1,13 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:squadio_test/constants.dart';
 
-class ProfileSlider extends StatelessWidget {
+class ProfileImage extends StatelessWidget {
   final String profileImage;
   final int currentPage = 1;
   final Function() onTap;
 
-  const ProfileSlider({
+  const ProfileImage({
     Key? key,
     required this.profileImage,
     required this.onTap,
@@ -17,9 +16,7 @@ class ProfileSlider extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 5,
-        ),
+        padding: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
         child: Container(
           height: 120,
           width: double.infinity,

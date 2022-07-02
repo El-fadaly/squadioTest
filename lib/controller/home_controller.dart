@@ -36,6 +36,7 @@ class HomeController extends GetxController {
 
   int indexBanner = 0;
 
+  bool isGrid = false;
   @override
   void onInit() async {
     // TODO: implement onInit
@@ -220,5 +221,10 @@ class HomeController extends GetxController {
         description: description,
       ),
     );
+  }
+
+  void changeProfilesLayoutShape() {
+    isGrid = !isGrid;
+    update();
   }
 }
